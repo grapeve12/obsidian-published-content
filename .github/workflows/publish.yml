@@ -49,7 +49,7 @@ jobs:
 
       ########################################################
 
-      - name: Commit and Push
+      - name: Commit and Push Published Content
         working-directory: deploy
         run: |
 
@@ -64,5 +64,44 @@ jobs:
           fi
 
           git commit -m "${{ github.event.head_commit.message }}"
+
+          git push origin main
+
+      ########################################################
+
+      - name: Checkout Portfolio
+        uses: actions/checkout@v4
+        with:
+          repository: grapeve12/my-portfolio-site
+          token: ${{ secrets.PORTFOLIO_REPO_TOKEN }}
+          ref: main
+          path: portfolio
+          submodules: true
+          fetch-depth: 1
+
+      ########################################################
+
+      - name: Update Obsidian Submodule
+        working-directory: portfolio
+        run: |
+          git submodule update --remote content/obsidian
+
+      ########################################################
+
+      - name: Commit and Push Portfolio
+        working-directory: portfolio
+        run: |
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add content/obsidian
+
+          if git diff --cached --quiet; then
+            echo "No submodule changes."
+            exit 0
+          fi
+
+          git commit -m "chore: update obsidian content"
 
           git push origin main
