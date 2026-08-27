@@ -84,7 +84,11 @@ jobs:
       - name: Update Obsidian Submodule
         working-directory: portfolio
         run: |
-          git submodule update --remote content/obsidian
+          git submodule sync --recursive
+          git submodule update --init content/obsidian
+
+          git -C content/obsidian fetch origin main
+          git -C content/obsidian checkout --detach origin/main
 
       ########################################################
 
