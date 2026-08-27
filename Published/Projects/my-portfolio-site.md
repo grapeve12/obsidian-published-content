@@ -1,9 +1,9 @@
 ---
-title: My Portfolio Site
+title: 포트폴리오 사이트 구축
 date: 2026-08-27
 
-tags: [WebPerformance, Obsidian, GithubActions, TextEmbedding, UIUX]
-description: "웹 성능 최적화와 UI/UX 개선을 시작으로, Obsidian과 GitHub 연동 및 AI 기반 태깅 시스템을 구축하며 개인 웹사이트를 고도화하는 개발 과정을 다룹니다."
+tags: [WebPerformance, Obsidian, Automation, GithubActions, UIUX]
+description: "웹 성능 최적화와 UI/UX 개선을 시작으로, Obsidian과 Github Actions를 활용한 개인 웹사이트의 자동화 및 기능 고도화 과정을 다룹니다."
 
 category: project
 thumbnail: "https://web.dev/static/articles/vitals/image/largest-contentful-paint-ea2e6ec5569b6.svg?hl=ko"
@@ -923,6 +923,47 @@ Download PDF
 ↓
 다운로드
 ```  
+
+<br>
+
+# 2026.08.27 | Github Actions와 Submodule을 통한 자동화  
+
+<br>
+
+```mermaid  
+flowchart TD
+    A["Obsidian<br/>vault branch"]
+    
+    B["obsidian-published-content<br/><br/>GitHub Actions<br/>① Markdown 변환<br/>② Published/ 동기화<br/>③ main push"]
+    
+    C["my-portfolio-site<br/><br/>④ checkout<br/>⑤ submodule → 최신 main<br/>⑥ submodule pointer 변경<br/>⑦ commit<br/>⑧ push"]
+    
+    D["Vercel<br/><br/>automatic deploy<br/><br/>npm run build<br/>↓<br/>generate-posts<br/>↓<br/>next build"]
+
+    A -->|"push"| B
+    B -->|"latest commit"| C
+    C -->|"push"| D
+```  
+
+<br>
+
+이 과정에서 my-portfolio-site 리포지토리 업데이트를 obsidian-public-content의 Github Actions로 트리거 해야하는데, 이때 **Github PAT**가 필요하다.  
+이는 Github에서 비밀번호 대신 사용하는 인증용 토큰이다  
+
+<br>
+
+PAT는 다음과 같은 종류가 있다.  
+- Fine-grained: 권한 세분화, 특정 리포지토리에만 적용할 거면 이게 좋다.  
+- Classic: 구버전. 좀 더 범용적인 사용에 쓴다.  
+
+<br>
+
+내 계정 `Setting > Developer Settings > Personal access tokens > Fine-grained tokens`에 들어가서 my-portfolio-site 만을 선택한 뒤 `Content: Read & Write` 권한만 부여해주면 된다.  
+만료 기간은 귀찮으니 기한 없음으로 뒀다.  
+
+<br>
+
+그리고 발급된 키를 `obsidian-published-content > Settings > Secrets and variables > Actions > Repository secrets`에 추가하면 된다.  
 
 <br>
 
